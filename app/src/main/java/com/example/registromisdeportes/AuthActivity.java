@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -35,6 +36,7 @@ public class AuthActivity extends AppCompatActivity {
         mFirebaseAnalytics.logEvent("InitScreen",bundle);
         setContentView(R.layout.activity_auth);
         InicioSesion=findViewById(R.id.button);
+        Registrarse=findViewById(R.id.button2);
         Imagen=findViewById(R.id.imageButton);
         Password=findViewById(R.id.editTextTextPassword);
         Email=findViewById(R.id.editTextTextEmailAddress);
@@ -54,7 +56,7 @@ public class AuthActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if ( task.isSuccessful()){
-                                showHome(task.getResult().getUser().getEmail());
+                                showHome();
                             }
                             else{
                                 showAlert();
@@ -73,7 +75,7 @@ public class AuthActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if ( task.isSuccessful()){
-                                showHome(task.getResult().getUser().getEmail());
+                                showHome();
                             }
                             else{
                                 showAlert();
@@ -93,9 +95,8 @@ public class AuthActivity extends AppCompatActivity {
         AlertDialog dialog=builder.create();
         dialog.show();
     }
-    private void showHome(String email){
-        Intent intent =new Intent(this,HomeActivity.class);
-        intent.putExtra("email",email);
+    private void showHome(){
+        Intent intent =new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
 }
