@@ -73,9 +73,9 @@ public class AuthActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(AuthActivity.this);
 
-                alertDialog.setTitle("Selecciona");
+                alertDialog.setTitle("Selecciona una opcion");
 
-                alertDialog.setCancelable(false);
+
                 alertDialog.setPositiveButton("Galeria", new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int which)
