@@ -50,8 +50,7 @@
         android:layout_marginTop="52dp"
         android:text="Iniciar Sesión"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.816"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button2"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
 
     <Button
