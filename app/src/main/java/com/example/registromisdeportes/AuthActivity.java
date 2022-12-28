@@ -11,6 +11,7 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,11 +23,14 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -57,6 +61,7 @@ public class AuthActivity extends AppCompatActivity {
     private static final int VENGO_DE_LA_CAMARA_CON_CALIDAD = 2;
     private static final int VENGO_DE_LA_GALERIA = 3;
     File fichero;
+    int CONTADOR=0;
     SharedPreferences myPreferences;
     private boolean estadoImagen=false;
 
@@ -244,10 +249,17 @@ public class AuthActivity extends AppCompatActivity {
     private  void showAlert(){
         AlertDialog.Builder builder =new  AlertDialog.Builder(this);
         builder.setTitle("Error");
-        builder.setMessage("Se ha producido un error autenticando al usuario");
         builder.setPositiveButton("Aceptar",null);
         AlertDialog dialog=builder.create();
         dialog.show();
+        CONTADOR++;
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.vibraranimation);
+        InicioSesion.startAnimation(animation);
+        Vibrator vibrator=(Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(1000);
+        if(CONTADOR==3){
+
+        }
     }
     private void showHome(){
         Intent intent =new Intent(this, HomeActivity.class);
