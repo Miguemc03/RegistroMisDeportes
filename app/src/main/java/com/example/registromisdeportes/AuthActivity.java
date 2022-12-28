@@ -13,13 +13,16 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +47,7 @@ import java.util.Locale;
 
 public class AuthActivity extends AppCompatActivity {
 
+    private static final String IMAGEN = "Imagen";
     ImageButton Imagen;
     Button InicioSesion,Registrarse;
     EditText Password,Email;
@@ -53,10 +57,15 @@ public class AuthActivity extends AppCompatActivity {
     private static final int VENGO_DE_LA_CAMARA_CON_CALIDAD = 2;
     private static final int VENGO_DE_LA_GALERIA = 3;
     File fichero;
+    SharedPreferences myPreferences;
+    private boolean estadoImagen=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(AuthActivity.this);
+        SharedPreferences.Editor myEditor = myPreferences.edit();
         setContentView(R.layout.activity_auth);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bundle = new Bundle();
@@ -68,6 +77,11 @@ public class AuthActivity extends AppCompatActivity {
         Imagen=findViewById(R.id.imageButton);
         Password=findViewById(R.id.editTextTextPassword);
         Email=findViewById(R.id.editTextTextEmailAddress);
+        if (myPreferences.getString(IMAGEN,"").isEmpty()==false){
+            Imagen.setImageURI(Uri.parse(myPreferences.getString(IMAGEN,"")));
+            estadoImagen=true;
+        }
+
         Imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,26 +160,39 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == VENGO_DE_LA_CAMARA && resultCode == RESULT_OK) {
-            Uri uri = (Uri) data.getData();
-            Imagen.setImageURI(uri);
-
-        } else if (requestCode == VENGO_DE_LA_CAMARA_CON_CALIDAD) {
+        if (requestCode == VENGO_DE_LA_CAMARA_CON_CALIDAD) {
             if (resultCode == RESULT_OK) {
-                Imagen.setImageURI(Uri.fromFile(fichero));
-
+                Imagen.setImageURI(Uri.parse(fichero.getAbsolutePath()));
+                myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor edit=myPreferences.edit();
+                edit.putString(IMAGEN,fichero.getAbsolutePath());
+                edit.commit();
+                estadoImagen=true;
                 actualizarGaleria(fichero.getAbsolutePath());
             } else {
                 fichero.delete();
             }
         }else if (requestCode== VENGO_DE_LA_GALERIA){
-            Uri imagenUri = data.getData();
+            try {
+                Uri imagenUri = data.getData();
+                myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor edit=myPreferences.edit();
+                edit.putString(IMAGEN,data.getData().toString());
+                edit.commit();
+                estadoImagen=true;
+                Imagen.setImageURI(imagenUri);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
 
-            Imagen.setImageURI(imagenUri);
         }
+
+
     }
 
     void actualizarGaleria(String path){
+
         MediaScannerConnection.scanFile(this, new String[]{path}, null, new MediaScannerConnection.OnScanCompletedListener() {
             @Override
             public void onScanCompleted(String s, Uri uri) {
@@ -197,7 +224,7 @@ public class AuthActivity extends AppCompatActivity {
         InicioSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!Email.getText().toString().isEmpty() && !Password.getText().toString().isEmpty()){
+                if(!Email.getText().toString().isEmpty() && !Password.getText().toString().isEmpty() && estadoImagen==true){
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(Email.getText().toString(),Password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
