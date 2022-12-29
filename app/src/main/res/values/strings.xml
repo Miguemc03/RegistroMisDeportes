@@ -13,8 +13,8 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Deportes</string>
+    <string name="title_dashboard">Crear Actividad</string>
+    <string name="title_notifications">Actividades</string>
     <string name="title_settings">Ajustes</string>
 </resources>

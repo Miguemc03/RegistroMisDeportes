@@ -6,14 +6,78 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <ScrollView
-        android:layout_width="416dp"
-        android:layout_height="518dp"
-        android:layout_marginTop="28dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
+    <Button
+        android:id="@+id/buttonGuardar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:text="Guardar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonBorrar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Borrar"
+        app:layout_constraintStart_toEndOf="@+id/buttonGuardar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonActualizar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="22dp"
+        android:text="Actualizar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonBorrar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:enabled="false"
+        android:hint="Id"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonGuardar" />
+
+    <EditText
+        android:id="@+id/editTextDescripcion"
+        android:layout_width="210dp"
+        android:layout_height="104dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Descripcion"
+        android:inputType="textMultiLine"
+        app:layout_constraintStart_toStartOf="@+id/editTextDeporte"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDeporte" />
+
+    <EditText
+        android:id="@+id/editTextDeporte"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Deporte"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/editTextID"
+        app:layout_constraintTop_toBottomOf="@+id/editTextID" />
+
+    <ScrollView
+        android:layout_width="320dp"
+        android:layout_height="243dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcion">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,7 +87,8 @@
             <ListView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
-                android:layout_height="505dp" />
+                android:layout_height="312dp" />
         </LinearLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

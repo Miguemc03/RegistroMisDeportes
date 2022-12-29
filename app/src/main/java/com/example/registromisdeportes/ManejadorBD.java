@@ -27,10 +27,24 @@ public class ManejadorBD extends SQLiteOpenHelper {
                 + COL_DEPORTE +  " TEXT,"
                 + COL_EXPLICACION + " TEXT"
                 + ")");
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES(NULL,'Futbol','Deporte que se juega con los pies golpeando a una pelota')");
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES(NULL,'Baloncesto','Deporte que se juega con las manos intentando meter una pelota por un aro')");
+        sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES(NULL,'Correr','Deporte que consiste en correr')");
     }
 
 
+    public boolean insertar(String deporte, String explicacion) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DEPORTE, deporte);
+        contentValues.put(COL_EXPLICACION, explicacion);
 
+        long resultado = sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+
+        sqLiteDatabase.close(); //Cierro la BD
+
+        return (resultado != -1); //en resultado está el número de filas afectadas
+    }
     public Cursor listar() {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null);
@@ -43,7 +57,19 @@ public class ManejadorBD extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
+    public boolean actualizar(String id, String deporte, String explicacion) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_DEPORTE, deporte);
+        contentValues.put(COL_EXPLICACION, explicacion);
 
+
+        long resultado = sqLiteDatabase.update(TABLE_NAME, contentValues, COL_ID + "=?", new String[]{id});
+        sqLiteDatabase.close();
+
+        return (resultado > 0);
+
+    }
     public boolean borrar(String id) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         int borradas = sqLiteDatabase.delete( TABLE_NAME,COL_ID+"=?",new String[]{id});
