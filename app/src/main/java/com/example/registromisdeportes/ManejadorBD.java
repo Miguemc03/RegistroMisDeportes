@@ -15,6 +15,15 @@ public class ManejadorBD extends SQLiteOpenHelper {
     private static final String COL_EXPLICACION = "EXPLICACION";
     private static final String TABLE_NAME = "DEPORTES";
 
+    private static final String TABLE_NAME2 = "ACTIVIDADES";
+    private static final String COL_ID2 = "ID";
+    private static final String COL_IDEXT = "ID_DEPORTE";
+    private static final String COL_FECHA = "FECHA";
+    private static final String COL_HORA = "HORA";
+    private static final String COL_LATITUD = "LATITUD";
+    private static final String COL_LONGITUD = "LONGITUD";
+    private static final String COL_DURACION = "DURANCION";
+
 
 
     public ManejadorBD(Context context) {
@@ -27,12 +36,35 @@ public class ManejadorBD extends SQLiteOpenHelper {
                 + COL_DEPORTE +  " TEXT,"
                 + COL_EXPLICACION + " TEXT"
                 + ")");
+        sqLiteDatabase.execSQL("CREATE TABLE " + TABLE_NAME2 + " (" + COL_ID2 + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COL_IDEXT +  " INTEGER,"
+                + COL_FECHA + " DATE,"
+                + COL_HORA + " TIME,"
+                + COL_LATITUD + " DOUBLE,"
+                + COL_LONGITUD + " DOUBLE,"
+                + COL_DURACION + " INTEGER"
+                + ")");
         sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES(NULL,'Futbol','Deporte que se juega con los pies golpeando a una pelota')");
         sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES(NULL,'Baloncesto','Deporte que se juega con las manos intentando meter una pelota por un aro')");
         sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME + " VALUES(NULL,'Correr','Deporte que consiste en correr')");
     }
 
+    public boolean crearActividad(Integer idEx,String fecha,String Hora,Double Latitud,Double Longitud, Integer Duracion){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_IDEXT, idEx);
+        contentValues.put(COL_FECHA, fecha);
+        contentValues.put(COL_HORA, Hora);
+        contentValues.put(COL_LATITUD, Latitud);
+        contentValues.put(COL_LONGITUD, Longitud);
+        contentValues.put(COL_DURACION, Duracion);
 
+        long resultado = sqLiteDatabase.insert(TABLE_NAME2, null, contentValues);
+
+        sqLiteDatabase.close(); //Cierro la BD
+
+        return (resultado != -1);
+    }
     public boolean insertar(String deporte, String explicacion) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
