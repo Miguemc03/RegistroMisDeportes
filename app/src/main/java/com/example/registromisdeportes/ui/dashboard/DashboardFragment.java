@@ -268,7 +268,7 @@ public class DashboardFragment extends Fragment {
             }
         }
         cursor.close();
-         cursor=manejadorBD.getDeporte(id.toString());
+         cursor=manejadorBD.getDeporte(id);
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             dep=cursor.getString(0);

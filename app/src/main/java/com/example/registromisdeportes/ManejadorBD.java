@@ -85,12 +85,17 @@ public class ManejadorBD extends SQLiteOpenHelper {
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         return cursor;
     }
+    public Cursor listarActividad() {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME2, null);
+        return cursor;
+    }
     public Cursor UltimaActividad() {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT MAX("+ COL_ID2+") FROM " + TABLE_NAME2,null);
         return cursor;
     }
-    public Cursor getDeporte(String id) {
+    public Cursor getDeporte(Integer id) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT "+ COL_DEPORTE+" FROM " + TABLE_NAME+" WHERE "+COL_ID+"="+id, null);
         return cursor;
