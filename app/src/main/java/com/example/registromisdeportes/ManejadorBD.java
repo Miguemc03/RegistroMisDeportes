@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ManejadorBD extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "moviles.db";
@@ -22,7 +25,7 @@ public class ManejadorBD extends SQLiteOpenHelper {
     private static final String COL_HORA = "HORA";
     private static final String COL_LATITUD = "LATITUD";
     private static final String COL_LONGITUD = "LONGITUD";
-    private static final String COL_DURACION = "DURANCION";
+    private static final String COL_DURACION = "DURACION";
 
 
 
@@ -38,7 +41,7 @@ public class ManejadorBD extends SQLiteOpenHelper {
                 + ")");
         sqLiteDatabase.execSQL("CREATE TABLE " + TABLE_NAME2 + " (" + COL_ID2 + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COL_IDEXT +  " INTEGER,"
-                + COL_FECHA + " DATE,"
+                + COL_FECHA + " TEXT,"
                 + COL_HORA + " TIME,"
                 + COL_LATITUD + " DOUBLE,"
                 + COL_LONGITUD + " DOUBLE,"
@@ -80,6 +83,22 @@ public class ManejadorBD extends SQLiteOpenHelper {
     public Cursor listar() {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        return cursor;
+    }
+    public Cursor UltimaActividad() {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT MAX("+ COL_ID2+") FROM " + TABLE_NAME2,null);
+        return cursor;
+    }
+    public Cursor getDeporte(String id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT "+ COL_DEPORTE+" FROM " + TABLE_NAME+" WHERE "+COL_ID+"="+id, null);
+        return cursor;
+    }
+    public Cursor getTiempo() {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        //Cursor cursor = sqLiteDatabase.rawQuery("SELECT SUM("+COL_DURACION +") FROM " + TABLE_NAME2+" WHERE "+COL_FECHA+"="+fecha, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT SUM("+COL_DURACION+") FROM "+TABLE_NAME2+"  WHERE "+COL_FECHA+"='"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+"'", null);
         return cursor;
     }
 

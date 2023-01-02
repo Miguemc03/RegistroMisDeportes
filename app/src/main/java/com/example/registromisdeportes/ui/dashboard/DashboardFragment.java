@@ -1,16 +1,24 @@
 package com.example.registromisdeportes.ui.dashboard;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +35,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -82,6 +91,8 @@ public class DashboardFragment extends Fragment {
     final Double[] Longitud = new Double[1];
     final Double[] Latitud = new Double[1];
     MediaPlayer mediaPlayer;
+    private static final String ID_CANAL = "Nombre del canal";
+    private static final int CODIGO_RESPUESTA = 123;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -218,7 +229,7 @@ public class DashboardFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
 
-            Toast.makeText(getContext(),"Fin",Toast.LENGTH_SHORT).show();
+            lazarNotificacionConFoto();
         }
 
         @Override
@@ -243,5 +254,68 @@ public class DashboardFragment extends Fragment {
             return null;
 
         }
+    }
+    private void lazarNotificacionConFoto() {
+        String idChannnel = "Canal 4";
+        String nombreCanal = "Canal con Foto";
+        String idAct="",dep="";
+        int tiempo=0;
+        Cursor cursor = manejadorBD.UltimaActividad();
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                idAct = cursor.getString(0);
+
+            }
+        }
+        cursor.close();
+         cursor=manejadorBD.getDeporte(id.toString());
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            dep=cursor.getString(0);
+        }
+        cursor.close();
+        String fecha=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        Log.v("fecha",fecha);
+        cursor=manejadorBD.getTiempo();
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            tiempo=cursor.getInt(0);
+            Log.v("Duracion",""+tiempo);
+        }
+
+        int min=tiempo/60;
+        int seg=tiempo%60;
+
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), ID_CANAL);
+
+
+        builder.setSmallIcon(R.mipmap.ic_launcher).
+                setContentTitle("Has finalizado tu actividad de: "+dep).
+                setAutoCancel(false).
+                setContentText("Hoy llevas un total de: "+min+":"+seg);
+
+        /*NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+        Bitmap bitmapAlbert = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
+        bigPictureStyle.bigPicture(bitmapAlbert);
+        bigPictureStyle.setBigContentTitle("Albert, un tío listo");
+        bigPictureStyle.setSummaryText("Sabía mucho este hombre");
+
+        builder.setStyle(bigPictureStyle);*/
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationChannel notificationChannel = new NotificationChannel(idChannnel, nombreCanal, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.GREEN);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setShowBadge(true);
+            builder.setChannelId(idChannnel);
+            notificationManager.createNotificationChannel(notificationChannel);
+
+        } else {
+            builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+        }
+        notificationManager.notify(1, builder.build());
     }
 }
