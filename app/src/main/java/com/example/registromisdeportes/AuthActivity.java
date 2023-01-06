@@ -63,7 +63,6 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
     ImageButton Imagen;
     Button InicioSesion,Registrarse;
     EditText Password,Email;
-    TextView texto;
     private FirebaseAnalytics mFirebaseAnalytics;
     private static final int VENGO_DE_LA_CAMARA = 1;
     private static final int PIDO_PERMISO_ESCRITURA = 1;
@@ -75,6 +74,7 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
     private boolean estadoImagen=false;
     SensorManager sensorManager;
     MediaPlayer mediaPlayer;
+    boolean sonido=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,6 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
         bundle.putString("message","Integracion de Firebase completa");
         mFirebaseAnalytics.logEvent("InitScreen",bundle);
         setContentView(R.layout.activity_auth);
-        texto=findViewById(R.id.textView);
         InicioSesion=findViewById(R.id.button);
         Registrarse=findViewById(R.id.button2);
         Imagen=findViewById(R.id.imageButton);
@@ -100,8 +99,7 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
             estadoImagen=true;
         }
         sensorManager= (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),SensorManager.SENSOR_DELAY_NORMAL);
-
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY), SensorManager.SENSOR_DELAY_NORMAL);
         Imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -275,6 +273,12 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
         InicioSesion.startAnimation(animation);
         Vibrator vibrator=(Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(1000);
+        if (CONTADOR == 3){
+
+            mediaPlayer.setLooping(true);
+            mediaPlayer.start();
+
+        }
 
 
     }
@@ -287,10 +291,20 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
 
-        if (sensorEvent.sensor.getType()== Sensor.TYPE_GYROSCOPE){
+        if (sensorEvent.sensor.getType()== Sensor.TYPE_PROXIMITY){
+            Log.v("Valores",sensorEvent.values[0]+"");
 
-            Sonido sonido = new Sonido();
-            sonido.execute(sensorEvent);
+
+
+
+                    if (mediaPlayer.isPlaying() && sensorEvent.values[0]==0) {
+                        mediaPlayer.stop();
+                        CONTADOR = 0;
+                    }
+
+
+
+
 
 
 
@@ -301,36 +315,5 @@ public class AuthActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
-    private class Sonido extends AsyncTask<SensorEvent, Void, Void> {
-        String pos;
 
-        @Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            texto.setText(pos);
-        }
-
-        @Override
-        protected Void doInBackground(SensorEvent... sensorEvents) {
-            SensorEvent sensorEvent = sensorEvents[0];
-            boolean sonido = true;
-            pos=""+sensorEvent.values[0];
-            if (CONTADOR >= 3 && sensorEvent.values[0] <= 0) {
-
-                while (sonido) {
-                    if (!mediaPlayer.isPlaying()) {
-                        mediaPlayer.start();
-                    }
-                    if (mediaPlayer.isPlaying() && sensorEvent.values[0] > 0) {
-                        mediaPlayer.stop();
-                        sonido = false;
-                        CONTADOR = 0;
-                    }
-
-
-                }
-            }
-            return null;
-        }
-    }
 }

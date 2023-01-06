@@ -45,6 +45,7 @@ import com.example.registromisdeportes.R;
 
 import com.example.registromisdeportes.databinding.FragmentDashboardBinding;
 import com.example.registromisdeportes.ui.home.HomeFragment;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class DashboardFragment extends Fragment {
             }
         };
         if (Longitud[0]!=null){
-            Toast.makeText(getContext(),"Ubicacion obtenida",Toast.LENGTH_SHORT).show();
+            Snackbar.make(view,"Ubicacion obtenida",Snackbar.LENGTH_SHORT).show();
         }
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -141,25 +142,32 @@ public class DashboardFragment extends Fragment {
         String fecha=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String hora=new SimpleDateFormat("HH:mm:ss").format(new Date());
         Integer duracion=0;
-        try {
-            duracion=Integer.parseInt(editTextMinutos.getText().toString())*60+Integer.parseInt(editTextSegundos.getText().toString());
-        }catch (Exception e){
-            Toast.makeText(getContext(),"Los datos de tiempo estan vacios",Toast.LENGTH_SHORT).show();
-        }
+
+            if(editTextMinutos.getText().toString().isEmpty()){
+        editTextMinutos.setText("0");
+    }
+            if(editTextSegundos.getText().toString().isEmpty()) {
+                editTextSegundos.setText("0");
+            }
+        duracion=Integer.parseInt(editTextMinutos.getText().toString())*60+Integer.parseInt(editTextSegundos.getText().toString());
         if (Longitud[0]!=null){
             boolean resultado = manejadorBD.crearActividad(id,fecha,hora,Latitud[0],Longitud[0],duracion);
 
             if (resultado) {
-                Toast.makeText(getContext(), "Se ha insertado correctamente", Toast.LENGTH_SHORT).show();
+                Snackbar.make(getView(), "Se ha insertado correctamente", Snackbar.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Error en la inserción", Toast.LENGTH_SHORT).show();
+                Snackbar.make(getView(), "Error en la inserción", Snackbar.LENGTH_SHORT).show();
             }
-            mediaPlayer.start();
+            if (Global.sonido){
+                mediaPlayer.start();
+
+            }
             MiCronometro mc = new MiCronometro(duracion, crono);
             mc.execute();
+
         }
         else {
-            Toast.makeText(getContext(),"Obteniendo ubicacion espera un momento",Toast.LENGTH_SHORT).show();
+            Snackbar.make(getView(),"Obteniendo ubicacion espera un momento",Snackbar.LENGTH_SHORT).show();
         }
 
 
@@ -174,7 +182,7 @@ public class DashboardFragment extends Fragment {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIEMPO_REFRESCO, 0, locationListener);
             } else {
-                Toast.makeText(getContext(), "Esta aplicación necesita este permiso para funcionar.", Toast.LENGTH_SHORT).show();
+                Snackbar.make(getView(), "Esta aplicación necesita este permiso para funcionar.", Snackbar.LENGTH_SHORT).show();
             }
         }
     }
@@ -205,9 +213,7 @@ public class DashboardFragment extends Fragment {
                             id=Integer.parseInt(cursor.getString(0));
                         }
                     }
-                    if (Global.sonido){
 
-                    }
                 }
                 //Toast.makeText(getContext(), "Has seleccionado el deporte: " + adapterView.getSelectedItem().toString()+" y su id es:"+id, Toast.LENGTH_SHORT).show();
             }
@@ -290,10 +296,10 @@ public class DashboardFragment extends Fragment {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), ID_CANAL);
 
 
-        builder.setSmallIcon(R.mipmap.ic_launcher).
+        builder.setSmallIcon(R.drawable.corriendo).
                 setContentTitle("Has finalizado tu actividad de: "+dep).
                 setAutoCancel(false).
-                setContentText("Hoy llevas un total de: "+min+":"+seg);
+                setContentText(String.format("Hoy llevas un total de: %02d:%02d",min,seg));
 
         /*NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
         Bitmap bitmapAlbert = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);

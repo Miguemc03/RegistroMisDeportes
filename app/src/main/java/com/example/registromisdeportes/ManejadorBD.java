@@ -100,14 +100,28 @@ public class ManejadorBD extends SQLiteOpenHelper {
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT "+ COL_DEPORTE+" FROM " + TABLE_NAME+" WHERE "+COL_ID+"="+id, null);
         return cursor;
     }
+    public Cursor getDeportes() {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT "+ COL_DEPORTE+","+COL_ID+" FROM " + TABLE_NAME, null);
+        return cursor;
+    }
     public Cursor getTiempo() {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        //Cursor cursor = sqLiteDatabase.rawQuery("SELECT SUM("+COL_DURACION +") FROM " + TABLE_NAME2+" WHERE "+COL_FECHA+"="+fecha, null);
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT SUM("+COL_DURACION+") FROM "+TABLE_NAME2+"  WHERE "+COL_FECHA+"='"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+"'", null);
+        return cursor;
+    }
+    public Cursor getDuracion(int idex) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT SUM("+COL_DURACION+") FROM "+TABLE_NAME2+"  WHERE "+COL_IDEXT+"="+idex, null);
         return cursor;
     }
 
 
+    public Cursor getNDeportes() {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT COUNT("+ COL_ID+") FROM " + TABLE_NAME, null);
+        return cursor;
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
